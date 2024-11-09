@@ -100,6 +100,106 @@ length长度 head表头 tail表尾 sorted list有序表 unsorted list 无序表
 
 ### 二叉树的实现
 #### 使用指针实现二叉树
+根据定义，每个节点都会有对应的两个子节点，，不论是否为空，那么最为简单的作法，就是选择使用指针，来指向对应的区域
+下面是一段具体实现的代码框架
+~~~cpp
+template<typename Key ,typename E>
+class BSTNode : pubilc BinNode<E>
+{
+private :
+ Key k;         //节点对应的索引
+ E it;          //节点对应的价值
+ BSTNode *lc;   //指向左节点的pointer
+ BSTNode *rc;   //指向右节点的pointer
+
+pubilc :
+BSTNode(){ lc = rc = NULL}  //对指针进行初始化赋值为空 
+BSTNode(Key K,E e ,BSTNode * l=NULL, BSTNode * r=NULL)
+{k =K;it =e;lc =l;rc=r;}
+~BSTNode(){};
+//为键值和价值进行读取和复制
+E& element(){return it;}
+void setElment(const E&e) {it=e;}
+Key &key (){return k;}
+void setKey (const Key& K){ k=K;}
+//为子节点进行赋值和读取
+inline BSTNode* left() const {return lc;}
+void setLeft (BSTNde<E>* b){lc = (BSTNode*)b;}
+inline BSTNode* reight() const{ return rc;}
+void setRight (BSTNode<E>* b){rc =(BSTNode*)b;}
+//判断是否为根节点还是子叶
+bool isLeaf(){return (lc==NULL)&&(rc==NULL);}
+};
+~~~
+
+在利用指针实现的二叉树中，叶节点和分支节点是否选用相同的类定义十分重要，使用相同的类可以简化实现，不可避免地带来空间的浪费，因而我们可能会选择分支节点存储某个操作符，在叶节点存储大量的数据或者不同的变量名，同时对于叶节点的进一步优化在于优化掉无用的指向字节点的空指针。
+
+##### 二叉检索树(binary search tree)
+在利用二叉搜索中我们找到一个元素的平均时间已经来到logn的时间复杂度，但是在我们需要删改的时候，我们会因为高昂的时间代价而却步，而二叉检索树天降伟人，通过利用树的优良结构同时减少了时间复杂度
+
+我们可以看一下这个定义  对于BST的任意一个节点，设置其值为K，则该节点左子树中任意一个节点的值都小于K；它的右子树中任意值都会大于K的值
+ 针对这个子树，我们可以明显发现他的特点在于利用中序输出，就会得到由小到大排序的节点。
+ 下面是搜索思路的描述
+
+从根节点开始，在BST中检索K值，如果根节点存储的值为K，检索结束。否则检索树的下一层。而实现二叉检索树的效率就在于左子树始终比右子树大，我们寻找的K值总能在左右找到位置，重复上述操作，直到找到K.
+或者在遇到了一个叶节点就停下来。
+~~~cpp
+//Binary Search implementation for the Dictionary ADT 
+template <typename Key ,typename E>* root ;
+class BST : public Dictionary<Key,E>{
+  private :
+    BSTNode<Key ,E>* root ;
+    int nodecount;//记录二叉搜索树的节点数量
+    //Private "helper functions "
+    void clearhelp(BSTNode<Key,E>*);
+    BSTNode<Key,E>* inserthelp(BSTNode<Key,E>*,const Key&, const E&);
+    BSTNode<Key,E>* deletemin(BSTNode<Key,E>* );
+    BSTNode<Key,E>* getmin(BSTNode<Key,E>* );
+    BSTNode<Key,E>* removehelp(BSTNode<Key,E>* ,const Key&);
+    E findhelp(BSTNode<Key,E>*,const Key&)const;
+    void printhelp(BSTNode <KEy,E>*,int )const;
+  public :
+    BST(){ root= NULL;nodecount=0;}
+    ~BST() {clearhelp(root);}  
+    void clear(){
+        clearhelp(root);root =NULL;nodecount=0;
+    }
+    /*插入一个节点到树中
+    同时对树的节点K进行更新*/
+    void insert(const Key&k,const E&e){
+        root = inserthelp(root,key,e);
+        nodecount++;
+
+    }
+    /*从树中移除一个节点
+    并且同时删去它对应的键值*/
+    E remove(const Key&k){
+    E temp = findhelper(root ,k );//首先找到它
+    if(temp != NULL){
+        root= removehelp(root ,k );
+        nodecount--;
+            }
+        return temp;
+    }
+    E removeAny(){
+        //Delete min valve
+        if( temp !=NULL){
+            E temp =root -> element();
+            root = removehelp(root,root->key());
+            nodecount--;
+            renturn temp;
+        }
+        else return NULL;
+    }//在树中删去对应的节点以及并且返回此树是否为空。 ‘
+    E find(const Key&k) const{ return findhelp(root ,k);}
+    int size () {return nodecount;}
+     
+    void print () const {   
+        if ( root== NULL)cout<<"BST is empty.\n ";
+        else printhelp(root,0);
+    }
+        }
+~~~
 
 
 
