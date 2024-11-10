@@ -200,6 +200,76 @@ class BST : public Dictionary<Key,E>{
     }
         }
 ~~~
+下面是部分私有函数的实现
+```cpp
+E BST<Key,E>::findhelp (BSTNode<Key, E>* root , const Key &k)const {
+    if (root ==NULL)return NULL;    //Empty
+    if(k < root->key())return findhelp(root ->left(),k);    //check left child 
+    else if (K>root ->key())return findhelp(root ->right (),k); //check right child
+    else return root->element();    //find it 当找到目标节点后，节点的记录信息会随着递归调用依次向上返回
+}
+// 插入函数 为了实现这个函数首先需要进行寻找到该节点应该存在的地方 
+//这意味着将会来到一个叶节点或者一个没有子节点的分支节点，将这个节点设置为插入节点的父节点 并且一般不考虑值相等的情况
+inserthelp(BSTNode<Key,E>*root ,const Key& k,const E&it ){
+    if (root ==NULL )return new BSTNode <Key,E >(k,it NULL,NULL);
+    if (k< root ->key())root->setLeft(inserthelp(root->left(),k,it));
+    else root->setRight(inserthelp(root->right(),k,it));
+    return root ;   // return tree with inserted one
+}
+deletemin(BSTNode<Key, E>* rt){//为了找到值最小的点，只需要一直向左走，直到找到最左侧的叶节点
+    if (rt->left()==NULL) return rt->right();
+    else {
+        rt->setleft(deletemin(rt->left()));
+        return rt;
+    }
+}
+getmin (BSTNode <Key, E>* rt){//找到对应的最小值
+    if (rt->left()==NULL)return rt;
+    else return getmin(rt->left());
+}
+/*将一个非最小节点从BST中删除，首先需要找到该节点，如果这个节点是叶节点，直接将他的父节点修改为NULL
+如果对应节点拥有一个子节点，将他的父节点指向他的节点重新指向这个子节点，如果拥有两个节点，问题就出现了，如何将两个子树接上去，
+简单的方法是直接接上去一个，但是要将另外一个挨个接上去，这种方法思路简单但是对应的工程量巨大
+有一个较好的解决方法是 在父节点的右子树中找到一个近似的子叶中的最小者来代替，这样就可以保持BST的结构完整功能没有太多改变 */
+removehelp(BSTNode <Key,E>* rt, const Key&k ){
+    if(rt==NULL)return NULL ;
+    else if (k < rt->key())
+        rt->setRight(removehelp(rt->right(),k));
+    else {// found it
+        BSTNode<Key ,E>* temp=rt;
+        if (rt ->left()==NULL){ //Only a right child 
+            rt= rt->right();
+            delete temp;
+        }
+        else if (rt->right()==NULL){// Only a left child 
+             rt =rt->left();
+             delete temp;
+        }
+        else {// both child not empty 
+        BSTNode <Key, E>* temp = getmin (rt->right ());
+        rt->setElement(temp->element());
+        rt->setKey(temp->key());
+        rt->setRight(deletemin(rt->right()));
+        delete temp;
+
+        }
+    }
+    return rt;
+}
+void BST<Key,E>::clearhelp(BSTNode<Key, E>* root ){
+    if (root ==NULL )return ;
+    clearhelp(root->left());
+    clearhelp(root->right());
+    delete root;
+}//清除所有树及其结构
+void BST<Key, E>::printhelp(BSTNode<Key, E>*root , int level)const{
+    if(root ==NULL) ruturn;
+    printhelp(root->left(),level++);    //打印左树
+    for( int i=0; i<level;i++)cout<<" ";//记录左子树层数
+    cout<<root->key()<<"\n";//输出对应的值
+    printhelp(root->right(),level++);//转向右树
+}
+```
 
 
 
