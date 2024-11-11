@@ -271,5 +271,79 @@ void BST<Key, E>::printhelp(BSTNode<Key, E>*root , int level)const{
 }
 ```
 
+##### 堆（Heap）
+堆由两条定义来决定，第一，堆是一个完全二叉树，通常使用数组实现；其次，堆是局部有序的
+下面是两种常见的堆：
+
+1.最大堆（max heap）：任意一个节点存储的值都大于或等于其任意一个子节点存储的值。所以根节点会存储着最大值
+
+2.最小堆（min heap）:任意一个节点存储的值都小于或等于其任意一个子节点存储的值。所以根节点会存储着最小值
+
+无论是最小堆还是最大堆，任何一个节点与其兄弟节点之间并没有必然联系，也就是说，只有这个结点是另一个节点的父子节点时才可以确定两者之间的关系。
+尽管在大部分情况下堆的实现一般采用数组，但是从逻辑上讲，堆本身是一种严谨的树结构
+这是一个最大堆的生成示例
+```cpp
+//Heap class
+template <typename E,typename Comp>class heap {
+    private:
+        E* Heap;        //Pointer to this array
+        int maxsize;    //maxmiun of this heap
+        int n;          //number of elements now in the heap
+
+        //Helper function to put element in its correct place
+        void siftdown(int pos){
+            while (! isLeaf(pos)){//Stop if pos is a leaf
+                int j =leftchild (pos);
+                int rc =rightchild(pos);
+                if (rc<n)&&Comp::prior (Heap[rc],Heap[j])
+                    j=rc;       //Set j to greater child's value
+                if (Comp::prior (Heap[j],Heap[rc]))return ;//Done
+                swap(Heap, pos ,j);
+                pos =j;         //Move down 
+            }
+    }
+    pubilc:
+        heap(E* h, int num ,int max)    //Comstructor
+            {  Heap = h; n =num ; maxsize = max; buildHeap();}
+        int size()  const{return n;} 
+        bool isLeaf(int pos) const{return (pos>=n/2)&&(pos<n);}//True if pos is a leaf
+        int leftchild (int pos )const{return 2*pos+1;}//return leftchild's posistion
+        int rightchild (int pos )const{return 2*pos+2;}//return rightchild's posistion
+        int parent (int pos)const{return (pos-1)/2;}    //return parent's posistion
+        void buildHeap(){for(int i=n/2-1;i>=0;i--)siftdown(i);}//Heapify the content of the heap
+        //Insert "it " into the heap
+        void insert(const E &it){
+            Assert(n< maxsize, "Heap is full");
+            int curr =n++;
+            Heap[curr]=it ; //start at the end
+            //now shift up until curr's parent > curr
+            while ((curr!=0)&&(Comp::prior(Heap[curr],Heap(=[parent(curr)])))){
+                swap(Heap, curr ,parent(curr));
+                curr=parent(curr);
+            }
+        }
+        //remove root 
+        E removefirst(){
+            Assert(n >0,"Heap is empty");
+            swap(Heap,0,--n);   //Swap first with last value
+            if( n!=0)siftdown(0);   //siftdown new root val
+            return Heap[n]; //return value 
+        }
+        E remove(int pos){
+            Assert((pos>=0)&&(pos <n),"Bad posistion");
+            if ( pos==(n-1))n--;
+            else{
+                swap(Heap,pos,--n); //swap with last value
+                while((pos!=0)&&Comp::prior(Heap[pos],Heap[parent(pos)])){
+                    swap(Heap, pos ,parent(pos));   //push up large key
+                    pos =parent(pos);
+                }
+                if (n!=0)siftdown(pos);//push down small key
+            }
+            return Heap[n];
+        }
+};
+```
+
 
 
