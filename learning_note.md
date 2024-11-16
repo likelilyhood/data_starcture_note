@@ -354,3 +354,94 @@ template <typename E,typename Comp>class heap {
 如何建立一个堆，可以借鉴BST的构建方法，一个一个插入，但是这种算法花费的时间太长，我们基于归纳法提出了一个较优的构建方法：假设左右两个子树都已经是堆了，情况一 R（当作root）值大于等于左右节点的值,此时构建完毕；情况二，小于任一值，此时将R的值和两个子节点中值较大的更换位置，这样得到新堆，直至返回情况一，否则一直保持递归，这样下来所有的复杂度就保持在O（n）的数量级上，远远优于传统的nlogn 复杂度
 
 
+#####   Huffman 编码树
+哈夫曼编码的引入 在程序应用中，时间和空间总是两两相对，为了提高运行效率，我们不免会牺牲空间作为代价，同样的，牺牲时间处理来节省空间在早期游戏优化中尤为常见，在这样的两方徘徊着中，有没有一种较为折中的方法，可以兼得其利
+答案就是哈夫曼编码，哈夫曼编码的理念就是根据出现和使用频率来规划时间和空间的分配，对于出现频次高的，我们给予更多的空间，便于减少他的响应时间，同样的。对于较低频次的，我们对他的空间采取压缩处理，节省空间，因为调用而产生的而外时间开销
+在较低的频率下是一个可以接受的代价。
+###### 实现哈夫曼编码树
+哈夫曼编码树的每一个叶节点对应着一个字母，叶节点的权重就是他出现的频率大小，目的在于按照最小外部路径建立一一棵树，一个叶节点的加权深度定义为 权重mutiple深度。具有最小外部路径权重的二叉树就是，对于给定的叶节点集合，具有加权路径长度最小之和的二叉树。
+具体描述来看就是权重大的叶节点的深度小，因为他相对总路径的花费最小，那么可以预见，权重相对较小的叶节点就会被推向更深的节点
+
+建立一个n个节点的哈夫曼树： 首先，创建n个初始的Haffman树。每个树只包含唯一的叶节点，将这个n棵树按照频率大小顺序排成一列，接着拿走前两个最小的树（顺序是按照从小到大排布的）将这两个树标记为一个分支节点的子树，那么这个新节点的权重或者频率就是两个子树的和，再次重新排序，重新迭代，直至剩余最后的一个，结束流程
+（生动描述一下 ，就是不停的合并两个最小的，生成一个较大的，然后继续排序，再次重新合并，直至剩下一个
+
+事实上哈夫曼编码树的建立就是贪心算法的具体体现
+
+下面是Haffman节点 的具体代码实现
+```cpp
+//Huffman tree node ADT
+template <typename E>class Huffnode {
+    public:
+    virtual ~huffNode (){}//基础编译
+    virtual int weight()=0;//返回对应的频率或者是权重
+    virtual bool isLef ()=0;//决定是否是分段
+};
+template <typename E>//叶节点的实现
+class LeafNode : public HuffNode<E>{
+    private :
+        E it;
+        int wgt ;
+    public:
+        LeafNode(const E&val , int freq){it = val ;wgt = freq;}
+        int weight (){return wgt ;}
+        E val (){return it ;}
+        bool isLeaf(){return true ;}
+        
+        }
+template <typename E>// 分支节点的实现
+class IntlNode : public HuffNode <E>{
+    private :
+        HuffNode <E>*lc;//左子节点
+        HuffNode <E>*rc;//右子节点
+        int wgt ;   //新节点的权重
+    public:
+        IntlNode (HuffNode<E>* l,HuffNode <E>*r){wgt = l->weight()+r->weight();lc=l;rc=r;}
+        int weight (){return wgt;}
+        bool isLeaf(){return false ;}
+        HuffNode <E>* left() const {return lc;}
+        void setleft (HuffNode<E>* b)
+        {lc = (HuffNode <E>* )b;}
+
+        HuffNode <E>* right() const {return rc;}
+        void setRight (HuffNode<E>* b)
+        {rc = (HuffNode <E>* )b;}
+        
+} ;
+```
+下面这部分代码是哈夫曼树的类说明
+```cpp
+template <typename E>* Root ;
+    public :
+        HuffTree(E& val, int freq)//叶节点的设置
+        { Root = new LeafNode<E>(val ,freq);}
+        HuffTree(HuffTree<E>* l,HuffTree<E>* r)
+        { Root = new IntlNode <E>(l->root (),r->root());}
+        ~HuffTree() {}
+        HuffNode <E>* root (){return Root;}
+        int weight (){
+            return Root->weight();
+        }
+```
+Huffman树构造函数的实现
+```cpp
+template <typename E>HuffTree<E>*
+buildHuffTree (HuffTree<e>** TreeArray ,int count ){
+    heap <HuffTree<E>*,minTreeComp>* forest =
+        new heap<HuffTree<E>*,minTreeComp>(TreeArray,count ,count );
+    HuffTree<char>* temp1,temp2,temp3=NULL;
+    while(forest->size()>1){
+        temp1= forest->removefirst();//将前两个子树推出当前子树集
+        temp2= forest->removefirst();
+        temp3= new HuffTree<E>(temp1,temp2);
+        forest->insert(temp3);//将新树还回原有集
+        delete temp1;
+        delete temp2;//删掉之前剔除掉的子树
+    }
+    return temp3;
+}
+```
+
+##### 哈夫曼编码和使用方法
+从根节点开始，分别将“0”和“1”标在树的每条边上，0代表左子节点，1代表右子节点，根据频率大小来决定对应的编号从而进一步决定排布编码。
+
+当我们在哈夫曼树中进行搜索时，可以按照字符串的0/1代码值来在树中经历相应的路径，最后找到对应的值
