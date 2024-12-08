@@ -1,3 +1,0 @@
-/home/pqb/huffman_codec_project/build/CMakeFiles/rebuild_cache.dir
-/home/pqb/huffman_codec_project/build/CMakeFiles/edit_cache.dir
-/home/pqb/huffman_codec_project/build/CMakeFiles/huffman_codec.dir
