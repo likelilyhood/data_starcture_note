@@ -1,0 +1,27 @@
+[
+{
+  "directory": "/home/pqb/huffman_codec_project/build",
+  "command": "/usr/bin/c++   -I/home/pqb/huffman_codec_project/include  -g   -std=gnu++11 -o CMakeFiles/huffman_codec.dir/main.cpp.o -c /home/pqb/huffman_codec_project/main.cpp",
+  "file": "/home/pqb/huffman_codec_project/main.cpp"
+},
+{
+  "directory": "/home/pqb/huffman_codec_project/build",
+  "command": "/usr/bin/c++   -I/home/pqb/huffman_codec_project/include  -g   -std=gnu++11 -o CMakeFiles/huffman_codec.dir/src/compressor.cpp.o -c /home/pqb/huffman_codec_project/src/compressor.cpp",
+  "file": "/home/pqb/huffman_codec_project/src/compressor.cpp"
+},
+{
+  "directory": "/home/pqb/huffman_codec_project/build",
+  "command": "/usr/bin/c++   -I/home/pqb/huffman_codec_project/include  -g   -std=gnu++11 -o CMakeFiles/huffman_codec.dir/src/decompressor.cpp.o -c /home/pqb/huffman_codec_project/src/decompressor.cpp",
+  "file": "/home/pqb/huffman_codec_project/src/decompressor.cpp"
+},
+{
+  "directory": "/home/pqb/huffman_codec_project/build",
+  "command": "/usr/bin/c++   -I/home/pqb/huffman_codec_project/include  -g   -std=gnu++11 -o CMakeFiles/huffman_codec.dir/src/huffman_tree.cpp.o -c /home/pqb/huffman_codec_project/src/huffman_tree.cpp",
+  "file": "/home/pqb/huffman_codec_project/src/huffman_tree.cpp"
+},
+{
+  "directory": "/home/pqb/huffman_codec_project/build",
+  "command": "/usr/bin/c++   -I/home/pqb/huffman_codec_project/include  -g   -std=gnu++11 -o CMakeFiles/huffman_codec.dir/src/utils.cpp.o -c /home/pqb/huffman_codec_project/src/utils.cpp",
+  "file": "/home/pqb/huffman_codec_project/src/utils.cpp"
+}
+]
